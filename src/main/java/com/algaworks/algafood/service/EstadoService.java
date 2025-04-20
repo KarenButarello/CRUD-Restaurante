@@ -6,6 +6,8 @@ import com.algaworks.algafood.model.Estado;
 import com.algaworks.algafood.repository.EstadoRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -37,27 +39,28 @@ public class EstadoService {
 
     public ResponseEntity<Estado> atualizarEstado(Long id, Estado estado) {
         var estadoAtual = repository.buscar(id);
-        estadoAtual.setNome(estado.getNome());
 
         if (estadoAtual != null) {
             BeanUtils.copyProperties(estado, estadoAtual, "id");
 
-            estadoAtual = repository.buscar(id);
-            return ResponseEntity.ok(repository.salvar(estadoAtual));
+            estadoAtual = repository.salvar(estadoAtual);
+            return ResponseEntity.ok(estadoAtual);
         }
+
         return ResponseEntity.notFound().build();
     }
 
-    public void deletar(Long id) {
+    public ResponseEntity<?> deletar(Long estadoId) {
         try {
-            repository.remover(id);
-        } catch (EntidadeEmUsoException e) {
-            throw new EntidadeEmUsoException(String
-                    .format("Estado não pode ser apagado pois existe cidade atralado a ele."));
+            repository.remover(estadoId);
+            return ResponseEntity.noContent().build();
 
         } catch (EntidadeNaoEncontradaException e) {
-            throw new EntidadeNaoEncontradaException("Estado não encontrado.");
-        }
+            return ResponseEntity.notFound().build();
 
+        } catch (EntidadeEmUsoException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(e.getMessage());
+        }
     }
 }

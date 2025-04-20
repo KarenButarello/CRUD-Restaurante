@@ -4,6 +4,7 @@ import com.algaworks.algafood.model.Estado;
 import com.algaworks.algafood.repository.EstadoRepository;
 import com.algaworks.algafood.service.EstadoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,7 +30,8 @@ public class EstadoController {
     }
 
     @PostMapping
-    public Estado cadastrarEstado(@RequestBody Estado estado) {
+    @ResponseStatus(HttpStatus.CREATED)
+    public Estado adicionar(@RequestBody Estado estado) {
         return service.cadastrarEstado(estado);
     }
 
@@ -39,7 +41,7 @@ public class EstadoController {
     }
 
     @DeleteMapping("/{id}")
-    public void deletarEstado(@PathVariable Long id) {
-        service.deletar(id);
+    public ResponseEntity<?> deletarEstado(@PathVariable Long id) {
+        return service.deletar(id);
     }
 }
