@@ -1,16 +1,11 @@
 package com.algaworks.algafood.repository;
 
 import com.algaworks.algafood.model.FormaPagamento;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-import java.util.List;
 
-public interface FormaPagamentoRepository {
+@Repository
+public interface FormaPagamentoRepository extends JpaRepository<FormaPagamento, Long> {
 
-    FormaPagamento buscar(Long id);
-
-    List<FormaPagamento> listar();
-
-    FormaPagamento salvar(FormaPagamento formaPagamento);
-
-    void remover(FormaPagamento formaPagamento);
 }
